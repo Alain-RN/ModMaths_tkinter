@@ -29,3 +29,15 @@
             print("Veuillez entrer un nombre entier !")
             return 0
 
+# ui/page_regression_lineaire.py
+  - Supprimer un element avec son index de la liste contrainte_liste
+    def suppr_contrainte(self, index):
+        # Supprimer la contrainte graphiquement
+        contrainte = self.contrainte_list.pop(index - 1)
+        for widget in contrainte:
+            widget.destroy()
+
+        # Reindexer les autres contraintes pour eviter le decalage
+        for i, contrainte in enumerate(self.contrainte_list, start=1):
+            btn = contrainte[-1]
+            btn.config(text=f"-{i}", command=lambda i=i: self.suppr_contrainte(i))
