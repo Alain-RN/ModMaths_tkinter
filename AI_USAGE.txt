@@ -1,0 +1,31 @@
+# /main.py
+  - Afficher un element
+    def show_frame(self, page_name):
+        frame = self.frames[page_name]
+        frame.tkraise()
+
+# ui/page_programmation_lineaire.py
+  - Verifier si les matrices des coefficients(inputs_A) et des seconds membres(inputs_b) sont completes et valides avec :
+    def verifier_inputs(self):
+        # Verifier inputs_A
+        for key, entry in self.inputs_A.items():
+            if entry.get().strip() == "":
+                print(f"L'entrée {key} dans A est vide !")
+                return False
+
+        # Verifier inputs_b
+        for key, entry in self.inputs_b.items():
+            if entry.get().strip() == "":
+                print(f"L'entrée {key} dans b est vide !")
+                return False
+
+        print("Toutes les Entry sont remplies !")
+        return True
+
+  - Gerer l'input de "n",entrer par l'utilisateur, pour que ca soit un entier si ce n'est pas le cas la fonction return 0
+    try:
+        n = int(val)
+    except ValueError:
+            print("Veuillez entrer un nombre entier !")
+            return 0
+
