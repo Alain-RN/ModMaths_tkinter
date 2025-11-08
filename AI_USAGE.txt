@@ -41,3 +41,42 @@
         for i, contrainte in enumerate(self.contrainte_list, start=1):
             btn = contrainte[-1]
             btn.config(text=f"-{i}", command=lambda i=i: self.suppr_contrainte(i))
+
+# core/prog_lineaire.py
+  - Afficher en graphique les contraintes et les donnees optimals
+    def afficher_graph(contrainte_data_list=None, data_optimal=None):
+      if contrainte_data_list is None:
+          contrainte_data_list = []
+      
+      x_vals = np.linspace(0, 10, 400)
+      
+      plt.figure(figsize=(7, 7))
+      
+      # Tracer chaque contrainte
+      for c in contrainte_data_list:
+          a, b = c["coefficient"]
+          signe = c["signe"]
+          c_val = c["second_membre"]
+          
+          if b != 0:
+              y = (c_val - a * x_vals) / b
+              plt.plot(x_vals, y, label=f'{a}x + {b}y {signe} {c_val}')
+          else:  # cas vertical x = c_val / a
+              x = np.full_like(x_vals, c_val / a)
+              plt.plot(x, x_vals, label=f'{a}x + {b}y {signe} {c_val}')
+      
+      # Définir limites selon contraintes
+      plt.xlim(0, max(10, max([c["second_membre"] for c in contrainte_data_list])))
+      plt.ylim(0, max(10, max([c["second_membre"] for c in contrainte_data_list])))
+      
+      # Tracer le point optimal
+      if data_optimal:
+          plt.scatter(data_optimal["x_max"], data_optimal["y_max"], color='red', s=100, label='Optimum')
+          plt.text(data_optimal["x_max"], data_optimal["y_max"]+0.3,
+                  f'({data_optimal["x_max"]}, {data_optimal["y_max"]})', color='red')
+      plt.xlabel("x")
+      plt.ylabel("y")
+      plt.title("Graphique des contraintes et point optimal")
+      plt.grid(True)
+      plt.legend()
+      plt.show()
