@@ -1,5 +1,4 @@
-# /main.py
-  - Afficher un element
+# main.py
     def show_frame(self, page_name):
         frame = self.frames[page_name]
         frame.tkraise()
@@ -21,8 +20,7 @@
 
         print("Toutes les Entry sont remplies !")
         return True
-
-  - Gerer l'input de "n",entrer par l'utilisateur, pour que ca soit un entier si ce n'est pas le cas la fonction return 0
+    +-----------------------------------------------------------------------------------------------------------------------+
     try:
         n = int(val)
     except ValueError:
@@ -30,45 +28,61 @@
             return 0
 
 # ui/page_regression_lineaire.py
-  - Supprimer un element avec son index de la liste contrainte_liste
     def suppr_contrainte(self, index):
         # Supprimer la contrainte graphiquement
         contrainte = self.contrainte_list.pop(index - 1)
         for widget in contrainte:
             widget.destroy()
-
         # Reindexer les autres contraintes pour eviter le decalage
         for i, contrainte in enumerate(self.contrainte_list, start=1):
             btn = contrainte[-1]
             btn.config(text=f"-{i}", command=lambda i=i: self.suppr_contrainte(i))
+    +-----------------------------------------------------------------------------------------------------------------------+
+    hauteur_max = 150
+    self.canvas = tk.Canvas(container, height=hauteur_max, borderwidth=0, background="#f0f0f0")
+    self.canvas.pack(side="left", fill="x", expand=True)
+    # Scrollbar verticale attachée au canvas
+    scrollbar = ttk.Scrollbar(container, orient="vertical", command=self.canvas.yview)
+    scrollbar.pack(side="right", fill="y")
+    self.canvas.configure(yscrollcommand=scrollbar.set)
+    self.container_input_list = ttk.Frame(self.canvas)
+    self.container_input_list.bind(
+      "<Configure>",
+      lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all"))  # zone scrollable = taille du contenu
+    )
+    self.canvas.create_window((0, 0), window=self.container_input_list, anchor="nw")
+
+# ui/page_systeme_lineaire.py
+  def supprimer_ligne(self, widget_list):
+    for widget in widget_list:
+      widget.destroy()
+    self.list_input_ligne.remove(widget_list)
+    +-----------------------------------------------------------------------------------------------------------------------+
+    # Scrollbar horizontale
+    scrollbar_x = ttk.Scrollbar(self, orient="horizontal", command=canvas.xview)
+    scrollbar_x.pack(fill="x", padx=36)
+    canvas.configure(xscrollcommand=scrollbar_x.set)
 
 # core/prog_lineaire.py
-  - Afficher en graphique les contraintes et les donnees optimals
     def afficher_graph(contrainte_data_list=None, data_optimal=None):
       if contrainte_data_list is None:
           contrainte_data_list = []
-      
       x_vals = np.linspace(0, 10, 400)
-      
       plt.figure(figsize=(7, 7))
-      
       # Tracer chaque contrainte
       for c in contrainte_data_list:
           a, b = c["coefficient"]
           signe = c["signe"]
           c_val = c["second_membre"]
-          
           if b != 0:
               y = (c_val - a * x_vals) / b
               plt.plot(x_vals, y, label=f'{a}x + {b}y {signe} {c_val}')
           else:  # cas vertical x = c_val / a
               x = np.full_like(x_vals, c_val / a)
               plt.plot(x, x_vals, label=f'{a}x + {b}y {signe} {c_val}')
-      
       # Définir limites selon contraintes
       plt.xlim(0, max(10, max([c["second_membre"] for c in contrainte_data_list])))
       plt.ylim(0, max(10, max([c["second_membre"] for c in contrainte_data_list])))
-      
       # Tracer le point optimal
       if data_optimal:
           plt.scatter(data_optimal["x_max"], data_optimal["y_max"], color='red', s=100, label='Optimum')
@@ -80,3 +94,18 @@
       plt.grid(True)
       plt.legend()
       plt.show()
+
+# core/reg_lineaire.py
+    # Tracer les residus (lignes verticales entre points et droite)
+    for xi, yi, y_pred_i in zip(X, Y, Y_pred):
+    plt.plot([xi, xi], [yi, y_pred_i], color='gray', linestyle='--', linewidth=1)
+    +-----------------------------------------------------------------------------------------------------------------------+
+    plt.title(f"Regression lineaire : {resultat['equation']}\nR² = {resultat['R2']:.4f}, Erreur moyenne = {resultat['erreur_moyenne']:.4f}")
+
+# core/gauss.py
+    def resoudre_systeme(A, b):
+        try:
+            return np.linalg.solve(A, b)
+        except ValueError:
+            print("Pas de solution")
+            return []

@@ -8,14 +8,16 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Modelisation Mathematique")
-        self.geometry("800x500")
+        self.geometry("846x580")
+        self.resizable(False, False)
 
         container = tk.Frame(self)
         container.pack(fill="both", expand=True)
 
         # Pour la navigation dans l'app
-        sidebar = tk.Frame(container, width=200, bg="#2c3e50")
+        sidebar = tk.Frame(container, width=224, bg="#2c3e50")
         sidebar.pack(side="left", fill="y")
+        sidebar.pack_propagate(False)
 
         # Zone pour afficher les pages
         self.content = tk.Frame(container, bg="#f1efec")
@@ -29,24 +31,40 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        tk.Label(sidebar, text="ModMaths", font=("Arial", 16)).pack(fill="x", pady=26, padx=10)
+        tk.Frame(sidebar, height=10, bg="#2c3e50").pack()
+        
+        tk.Label(
+            sidebar, text="m o d M a t h s", font=("Arial", 13, "bold"), fg="white",
+            pady=14.5, background="#32475c"
+        ).pack(fill="x", pady=30, padx=20)
 
-        btn1 = tk.Button(sidebar, text="Systeme Lineaire",
-                         command=lambda: self.show_frame("PageSystemeLineaire"),
-                         bg="#34495e", fg="white", relief="flat")
-        btn1.pack(fill="x", pady=5, padx=10)
+        tk.Frame(sidebar, height=4, bg="#2c3e50").pack()
 
-        btn2 = tk.Button(sidebar, text="Regression Lineaire",
-                         command=lambda: self.show_frame("PageRegressionLineaire"),
-                         bg="#34495e", fg="white", relief="flat")
-        btn2.pack(fill="x", pady=5, padx=10)
+        btn1 = tk.Button(
+            sidebar, text="Systeme Lineaire", font=("Arial", 10, "bold"),
+            command=lambda: self.show_frame("PageSystemeLineaire"),
+            bg="#34495e", fg="white", relief="flat",
+            pady=5
+        )
+        btn1.pack(fill="x", pady=0, padx=20)
 
-        btn3 = tk.Button(sidebar, text="Programmation Lineaire",
-                         command=lambda: self.show_frame("PageProgrammationLineaire"),
-                         bg="#34495e", fg="white", relief="flat")
-        btn3.pack(fill="x", pady=5, padx=10)
+        btn2 = tk.Button(
+            sidebar, text="Regression Lineaire", font=("Arial", 10, "bold"),
+            command=lambda: self.show_frame("PageRegressionLineaire"),
+            bg="#34495e", fg="white", relief="flat",
+            pady=5
+        )
+        btn2.pack(fill="x", pady=16, padx=20)
 
-        self.show_frame("PageRegressionLineaire")
+        btn3 = tk.Button(
+            sidebar, text="Programmation Lineaire", font=("Arial", 10, "bold"),
+            command=lambda: self.show_frame("PageProgrammationLineaire"),
+            bg="#34495e", fg="white", relief="flat",
+            pady=5
+        )
+        btn3.pack(fill="x", pady=0, padx=20)
+
+        self.show_frame("PageProgrammationLineaire")
 
     # Pour afficher une page
     def show_frame(self, page_name):

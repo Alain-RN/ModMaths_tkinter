@@ -9,19 +9,26 @@ class PageSystemeLineaire(tk.Frame):
         self.controller = controller
 
         pad_x = 24
-        
-        tk.Frame(self, height=24).pack()
 
-        label = ttk.Label(self, text="Systeme lineaire", font=("Arial", 24))
+        tk.Frame(self, height=40).pack()
+
+        label = tk.Label(
+            self, text="Systeme lineaire", font=("Arial", 18), fg="white",
+            background="#2c3e50", padx= 16, pady= 11, anchor="w"
+        )
         label.pack(fill="x", pady=0, padx=pad_x)
 
-        tk.Frame(self, height=12).pack()
+        tk.Frame(self, height=24).pack()
 
         # Input pour entrer le nombre de variable
         container_input_n = tk.Frame(self)
-        container_input_n.pack(fill="x", pady=0, padx=pad_x)
+        container_input_n.pack(fill="x", pady=0, padx=pad_x + 12)
 
-        ttk.Label(container_input_n, text="Nombre de variables (n > 1) :  ", font=("Arial", 11)).grid(row=0, column= 0)
+        ttk.Label(
+            container_input_n, 
+            text="Nombre de variables (n > 1) : ", 
+            font=("Arial", 12, "bold")
+        ).grid(row=0, column= 0)
         self.input_n = ttk.Entry(container_input_n, width=12)
         self.input_n.grid(row=0, column=1)
         ttk.Button(container_input_n, text="Valider", command= self.generer_matrice).grid(row=0, column= 2,padx=8)
@@ -33,13 +40,13 @@ class PageSystemeLineaire(tk.Frame):
             # Verifier inputs_A
             for key, entry in self.inputs_A.items():
                 if entry.get().strip() == "":
-                    print(f"L'entrée {key} dans A est vide !")
+                    print(f"L'entree {key} dans A est vide !")
                     return False
 
             # Verifier inputs_b
             for key, entry in self.inputs_b.items():
                 if entry.get().strip() == "":
-                    print(f"L'entrée {key} dans b est vide !")
+                    print(f"L'entree {key} dans b est vide !")
                     return False
 
             print("Toutes les Entry sont remplies !")
@@ -103,8 +110,45 @@ class PageSystemeLineaire(tk.Frame):
             return
 
         # Container pour les inputs des matrices
-        container_inputs = tk.Frame(self)
-        container_inputs.pack(fill="x", pady=0, padx=24)
+        c_principale = ttk.Frame(self)
+        c_principale.pack(fill="x", pady=0, padx=36)
+        self.container_inputs_widgets.append(c_principale)
+
+        l_titre = ttk.Label(
+            c_principale, 
+            text="Systeme a resoudre :",
+            font=("Arial", 12)
+        )
+        l_titre.pack(anchor="w", padx=0, pady=2)
+        self.container_inputs_widgets.append(l_titre)
+
+        hauteur_max = 100
+
+        canvas = tk.Canvas(c_principale, height=hauteur_max, borderwidth=0)
+        canvas.pack(side="left", fill="both", expand=True, padx=2, pady=4)  # fill="both" pour gerer X et Y
+
+        # Scrollbar verticale
+        scrollbar_y = ttk.Scrollbar(c_principale, orient="vertical", command=canvas.yview)
+        scrollbar_y.pack(side="right", fill="y")
+        canvas.configure(yscrollcommand=scrollbar_y.set)
+
+        # Frame a l'intérieur du canvas
+        container_inputs = tk.Frame(canvas)
+        container_inputs.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+
+        # Scrollbar horizontale
+        scrollbar_x = ttk.Scrollbar(self, orient="horizontal", command=canvas.xview)
+        scrollbar_x.pack(fill="x", padx=36)
+        canvas.configure(xscrollcommand=scrollbar_x.set)
+
+        canvas.create_window((0, 0), window=container_inputs, anchor="nw")
+
+        self.container_inputs_widgets.append(canvas)
+        self.container_inputs_widgets.append(scrollbar_x)
+        self.container_inputs_widgets.append(scrollbar_y)
         self.container_inputs_widgets.append(container_inputs)
 
         self.inputs_A = {}
@@ -128,8 +172,8 @@ class PageSystemeLineaire(tk.Frame):
             self.container_inputs_widgets.append(entry)
 
         # Bouton Afficher
-        btn = tk.Button(container_inputs, text="Resoudre", command=self.generer_solution, padx=12)
-        btn.grid(row=self.n, column=0,columnspan=2, pady=18)
+        btn = ttk.Button(self, text="Resoudre", command=self.generer_solution)
+        btn.pack(anchor="w", padx=38, pady=8)
         self.container_inputs_widgets.append(btn)
 
     # Genere les widgets des solution du Systeme
@@ -149,17 +193,17 @@ class PageSystemeLineaire(tk.Frame):
         
         # Container pour les solutions
         container_solution = tk.Frame(self)
-        container_solution.pack(fill="x", pady=0, padx=24)
+        container_solution.pack(fill="x", pady=4, padx=36)
         self.container_solution_widgets.append(container_solution)
         
-        label_title = tk.Label(container_solution, text="Solution :", font=("Arial", 14))
-        label_title.grid(row=0, column=0, sticky="w", padx=0, pady= 4)
+        label_title = tk.Label(container_solution, text="Solution :", font=("Arial", 12, "bold"))
+        label_title.grid(row=0, column=0, sticky="w", padx=0, pady= 2)
         self.container_solution_widgets.append(label_title)
 
         solutions = resoudre_systeme(self.A, self.b)
 
         if len(solutions) == 0:
-            l = tk.Label(container_solution, text="     Pas de solution", font=("Arial", 12))
+            l = tk.Label(container_solution, text="     Pas de solution", font=("Arial", 10))
             l.grid(row=1, column=0, sticky="w", pady=2)
             self.container_solution_widgets.append(l)
             return
@@ -174,12 +218,3 @@ class PageSystemeLineaire(tk.Frame):
             x_value = tk.Label(container_solution, text=f"{val}", font=("Arial", 12))
             x_value.grid(row=i+1, column=1, sticky="w", pady=2, padx=0)
             self.container_solution_widgets.append(x_value)
-
-
-
-
-
-
-
-    
-
